@@ -1,8 +1,8 @@
 package urlshort
 
 import (
-  "gopkg.in/yaml.v3"
-  "net/http"
+	"gopkg.in/yaml.v3"
+	"net/http"
 )
 
 // MapHandler will return an http.HandlerFunc (which also
@@ -12,21 +12,21 @@ import (
 // If the path is not provided in the map, then the fallback
 // http.Handler will be called instead.
 func MapHandler(pathsToUrls map[string]string, fallback http.Handler) http.HandlerFunc {
-  //  TODO: Implement this.
-  return func(w http.ResponseWriter, r *http.Request) {
-    uri := r.RequestURI
-    path, ok := pathsToUrls[uri]
-    if !ok {
-      fallback.ServeHTTP(w, r)
-      return
-    }
-    http.Redirect(w, r, path, http.StatusPermanentRedirect)
-  }
+	//  TODO: Implement this.
+	return func(w http.ResponseWriter, r *http.Request) {
+		uri := r.RequestURI
+		path, ok := pathsToUrls[uri]
+		if !ok {
+			fallback.ServeHTTP(w, r)
+			return
+		}
+		http.Redirect(w, r, path, http.StatusPermanentRedirect)
+	}
 }
 
 type ShortenerInfo struct {
-  Path string `yaml:"path"`
-  URL  string `yaml:"url"`
+	Path string `yaml:"path"`
+	URL  string `yaml:"url"`
 }
 
 // YAMLHandler will parse the provided YAML and then return
@@ -46,13 +46,13 @@ type ShortenerInfo struct {
 // See MapHandler to create a similar http.HandlerFunc via
 // a mapping of paths to urls.
 func YAMLHandler(yml []byte, fallback http.Handler) (http.HandlerFunc, error) {
-  var paths []ShortenerInfo
-  if err := yaml.Unmarshal(yml, &paths); err != nil {
-    return nil, err
-  }
-  pathsMap := make(map[string]string, len(paths))
-  for _, path := range paths {
-    pathsMap[path.Path] = path.URL
-  }
-  return MapHandler(pathsMap, fallback), nil
+	var paths []ShortenerInfo
+	if err := yaml.Unmarshal(yml, &paths); err != nil {
+		return nil, err
+	}
+	pathsMap := make(map[string]string, len(paths))
+	for _, path := range paths {
+		pathsMap[path.Path] = path.URL
+	}
+	return MapHandler(pathsMap, fallback), nil
 }
