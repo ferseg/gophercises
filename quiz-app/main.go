@@ -27,10 +27,10 @@ func parseLinesToProblems(data [][]string) []problem {
 	return problems
 }
 
-func scanUserAnswer(answerCh (chan string)) {
+func scanUserAnswer(answerCh chan string) {
 	var usrAnswer string
 	fmt.Scanf("%s", &usrAnswer)
-  answerCh <- usrAnswer
+	answerCh <- usrAnswer
 }
 
 func main() {
@@ -59,14 +59,14 @@ func main() {
 	for _, row := range problems {
 		fmt.Printf("What is the result of the following operation %s: ", row.Question)
 
-    answerCh := make(chan string)
-    go scanUserAnswer(answerCh)
+		answerCh := make(chan string)
+		go scanUserAnswer(answerCh)
 
 		select {
 		case <-timer.C:
-    fmt.Printf("\nTime expired! You've scored %d out of %d\n", correct, len(problems))
-      return
-    case usrAnswer := <-answerCh:
+			fmt.Printf("\nTime expired! You've scored %d out of %d\n", correct, len(problems))
+			return
+		case usrAnswer := <-answerCh:
 			if usrAnswer == row.Answer {
 				correct++
 			}
